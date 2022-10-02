@@ -8,19 +8,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import py.una.entidad.Cambio;
+import py.una.entidad.Nis;
 
-public class CambioDAO {
+public class NisDAO {
 
     /**
-     * 
      * @param condiciones
      * @return
      */
-    public List<Cambio> seleccionar() {
-        String query = "SELECT id_entidad, compra, venta FROM cambio";
+    public List<Nis> seleccionar() {
+        String query = "SELECT id_nis, estado FROM  nis";
 
-        List<Cambio> lista = new ArrayList<Cambio>();
+        List<Nis> lista = new ArrayList<Nis>();
 
         Connection conn = null;
         try {
@@ -28,10 +27,9 @@ public class CambioDAO {
             ResultSet rs = conn.createStatement().executeQuery(query);
 
             while (rs.next()) {
-                Cambio c = new Cambio();
-                c.setId_entidad(null);
-                c.setCompra(null);
-                c.setVenta(null);
+                Nis c = new Nis();
+                c.setId_nis(null);
+                c.setEstado(null);
 
                 lista.add(c);
             }
@@ -49,10 +47,83 @@ public class CambioDAO {
 
     }
 
-    public long insertar(Cambio c) throws SQLException {
+    public Nis seleccionarPorIdNis(Long id) {
+        String SQL = "SELECT id_nis, estado FROM nis WHERE id_nis = ? ";
 
-        String SQL = "INSERT INTO cambio(id_entidad, compra, venta) "
-                + "VALUES(?,?,?)";
+        Nis lista = new Nis();
+
+        Connection conn = null;
+        try {
+            conn = Bd.connect();
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setLong(1, id);
+
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()) {
+                Nis m = new Nis();
+                m.setId_nis(rs.getLong(1));
+                m.setEstado(rs.getInt(2));
+                lista=m;
+            }
+
+
+
+        } catch (SQLException ex) {
+            System.out.println("Error en la seleccion: " + ex.getMessage());
+        } finally {
+            try {
+                conn.close();
+            } catch (Exception ef) {
+                System.out.println("No se pudo cerrar la conexion a BD: " + ef.getMessage());
+            }
+        }
+        return lista;
+
+    }
+
+    public ArrayList<Long> seleccionarPorEstado(int estado) {
+        String SQL = "SELECT id_nis FROM nis WHERE estado = ? ";
+
+
+        List<Long> lista = new ArrayList<Long>();
+
+        Connection conn = null;
+        try
+        {
+            conn = Bd.connect();
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setInt(1, estado);
+            System.out.println(pstmt.toString());
+
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                Long m;
+                m = rs.getLong(1);
+
+                lista.add(m);
+            }
+
+        } catch (SQLException ex) {
+            System.out.println("Error en la seleccion: " + ex.getMessage());
+        }
+        finally  {
+            try{
+                conn.close();
+            }catch(Exception ef){
+                System.out.println("No se pudo cerrar la conexion a BD: "+ ef.getMessage());
+            }
+        }
+        return (ArrayList<Long>) lista;
+
+    }
+
+
+    public long insertar(Nis c) throws SQLException {
+
+        String SQL = "INSERT INTO nis(id_nis, estado) "
+                + "VALUES(?,?)";
 
         long id = 0;
         Connection conn = null;
@@ -60,9 +131,8 @@ public class CambioDAO {
         try {
             conn = Bd.connect();
             PreparedStatement pstmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setLong(1, c.getId_entidad());
-            pstmt.setDouble(2, c.getCompra());
-            pstmt.setDouble(3, c.getVenta());
+            pstmt.setLong(1, c.getId_nis());
+            pstmt.setDouble(2, c.getEstado());
 
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
@@ -90,9 +160,9 @@ public class CambioDAO {
 
     }
 
-    public long actualizar(Cambio c) throws SQLException {
+    public long actualizar(Nis c) throws SQLException {
 
-        String SQL = "UPDATE cambio SET id_entidad= ? , compra= ? WHERE id_entidad = ? ";
+        String SQL = "UPDATE nis SET id_nis= ? , estado= ? WHERE id_nis = ? ";
 
         long id = 0;
         Connection conn = null;
@@ -100,9 +170,9 @@ public class CambioDAO {
         try {
             conn = Bd.connect();
             PreparedStatement pstmt = conn.prepareStatement(SQL, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setLong(1, c.getId_entidad());
-            pstmt.setDouble(2, c.getCompra());
-            pstmt.setDouble(3, c.getVenta());
+            pstmt.setLong(1, c.getId_nis());
+            pstmt.setDouble(2, c.getEstado());
+            pstmt.setDouble(3, c.getId_nis());
 
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
@@ -128,9 +198,9 @@ public class CambioDAO {
         return id;
     }
 
-    public long borrar(long id_entidad) throws SQLException {
+    public long borrar(long id_nis) throws SQLException {
 
-        String SQL = "DELETE FROM cambio WHERE id_entidad = ? ";
+        String SQL = "DELETE FROM nis WHERE id_nis = ? ";
 
         long id = 0;
         Connection conn = null;
@@ -138,7 +208,7 @@ public class CambioDAO {
         try {
             conn = Bd.connect();
             PreparedStatement pstmt = conn.prepareStatement(SQL);
-            pstmt.setLong(1, id_entidad);
+            pstmt.setLong(1, id_nis);
 
             int affectedRows = pstmt.executeUpdate();
             // check the affected rows
