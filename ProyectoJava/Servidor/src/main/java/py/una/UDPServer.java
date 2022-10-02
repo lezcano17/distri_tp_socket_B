@@ -78,9 +78,6 @@ public class UDPServer {
                 ndao.insertar(new Nis(cuerpo));
                 return new Operacion(1, "Operacion completada con exito");
             case 2:
-
-                return new Operacion(2, "No hay temperatura");
-            case 3:
                 System.out.println("Llego");
                 aux = NisJSON.stringObjeto(datoRecibido.cuerpo);
                 System.out.println(aux.getId_nis());
@@ -89,18 +86,18 @@ public class UDPServer {
 
                 if (aux2 != null && aux2.getEstado() == 1) {
                     ndao.actualizar(aux);
-                    return new Operacion(3, "Operacion completada con exito");
+                    return new Operacion(2, "Operacion completada con exito");
                 }
-                return new Operacion(3, "La operacion no se ha podido realizar");
-            case 4:
+                return new Operacion(2, "La operacion no se ha podido realizar");
+            case 3:
                 aux = NisJSON.stringObjeto(datoRecibido.cuerpo);
                 aux2 = ndao.seleccionarPorIdNis(aux.getId_nis());
                 if (aux2 != null && aux2.getEstado() == 0) {
                     ndao.actualizar(aux);
-                    return new Operacion(4, "Operacion completada con exito");
+                    return new Operacion(3, "Operacion completada con exito");
                 }
-                return new Operacion(4, "La operacion no se ha podido realizar");
-            case 5:
+                return new Operacion(3, "La operacion no se ha podido realizar");
+            case 4:
                 String estado = cuerpo;
                 String lista = "La lista de activos es: ";
                 ArrayList<Long> aux3 = ndao.seleccionarPorEstado(Integer.parseInt(estado));
@@ -108,9 +105,9 @@ public class UDPServer {
                     lista = lista + "\n Id_Nis: " + aux3.get(i);
                 }
 
-                return new Operacion(5, lista);
+                return new Operacion(4, lista);
 
-            case 6:
+            case 5:
                 String estado1 = cuerpo;
                 String lista1 = "La lista de inactivos es: ";
                 System.out.println("" + Integer.parseInt(estado1));
@@ -119,7 +116,7 @@ public class UDPServer {
                     lista1 = lista1 + "\n Id_Nis:" + aux4.get(i);
                 }
 
-                return new Operacion(6, lista1);
+                return new Operacion(5, lista1);
 
 
             default:

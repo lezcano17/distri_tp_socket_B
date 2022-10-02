@@ -17,8 +17,8 @@ public class Menu {
 
     public static Operacion clienteMenu(){
         System.out.println("1 - Registrar consumo NIS");
-        System.out.println("2 - Enviar orden conexion");
-        System.out.println("3 - Enviar orden desconexion");
+        System.out.println("2 - Enviar orden desconexión");
+        System.out.println("3 - Enviar orden conexión");
         System.out.println("4 - Listar NIS activos");
         System.out.println("5 - Listar NIS inactivos");
         System.out.println("Cualquier otro caracter para salir");
