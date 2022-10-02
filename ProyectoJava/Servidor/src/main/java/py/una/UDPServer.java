@@ -58,6 +58,7 @@ public class UDPServer {
                 // Enviando response
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
+                System.out.println("IP Origen: "+  IPAddress + ":"+ puertoServidor + " IP Destino: " + IPAddress + ":"+ port );
                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
                 serverSocket.send(sendPacket);
             }
@@ -76,6 +77,7 @@ public class UDPServer {
         switch (tipo_operacion) {
             case 1:
                 ndao.insertar(new Nis(cuerpo));
+
                 return new Operacion(1, "Operacion completada con exito");
             case 2:
                 System.out.println("Llego");
