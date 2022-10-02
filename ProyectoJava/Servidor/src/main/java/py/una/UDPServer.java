@@ -1,7 +1,6 @@
-package py.una.server.udp;
+package py.una;
 
 import java.net.*;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import py.una.bd.NisDAO;

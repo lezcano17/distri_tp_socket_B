@@ -1,8 +1,9 @@
-package py.una.server.udp;
+package py.una;
 
 import java.util.Scanner;
 
 import py.una.entidad.Nis;
+import py.una.entidad.NisJSON;
 import py.una.entidad.Operacion;
 
 import static py.una.entidad.NisJSON.objetoString;
@@ -35,7 +36,7 @@ public class Menu {
                 System.out.println("Estado: ");
                 datos.setEstado( Integer.parseInt(sc.next()));
 
-                cuerpo = objetoString(datos);
+                cuerpo = NisJSON.objetoString(datos);
                 break;
             case 2:
                 int valor = 0;
@@ -44,7 +45,7 @@ public class Menu {
                 datos.setId_nis(Long.parseLong(sc.next()));
                 datos.setEstado(valor);
 
-                cuerpo = objetoString(datos);
+                cuerpo = NisJSON.objetoString(datos);
                 break;
             case 3:
 
@@ -53,7 +54,7 @@ public class Menu {
                 datos.setId_nis(Long.parseLong(sc.next()));
                 datos.setEstado(1);
 
-                cuerpo = objetoString(datos);
+                cuerpo = NisJSON.objetoString(datos);
                 break;
             case 4:
                 cuerpo = "1";

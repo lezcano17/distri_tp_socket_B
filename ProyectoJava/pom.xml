@@ -6,7 +6,12 @@
 
     <groupId>py.una.pol.sd</groupId>
     <artifactId>socket</artifactId>
+    <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
+    <modules>
+        <module>Cliente</module>
+		<module>Servidor</module>
+	</modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,7 +42,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>py.una.server.udp.UDPServer</mainClass>
+							<mainClass>py.una.UDPServer</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

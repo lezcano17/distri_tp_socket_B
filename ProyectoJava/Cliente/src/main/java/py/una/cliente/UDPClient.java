@@ -1,14 +1,12 @@
-package py.una.server.udp;
+package py.una.cliente;
 
 
 import java.io.*;
 import java.net.*;
 
-import py.una.entidad.NisJSON;
-import py.una.entidad.Nis;
 import py.una.entidad.Operacion;
 
-import static py.una.server.udp.Menu.*;
+import static py.una.Menu.*;
 
 class UDPClient {
     public static boolean salir = false;
