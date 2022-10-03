@@ -1,5 +1,6 @@
 package py.una;
-
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.net.*;
 import java.util.ArrayList;
 
@@ -7,7 +8,10 @@ import py.una.bd.NisDAO;
 import py.una.entidad.Nis;
 import py.una.entidad.NisJSON;
 import py.una.entidad.Operacion;
-
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.io.File;
+import java.io.FileWriter;
 public class UDPServer {
 
     public static NisDAO ndao = new NisDAO();
@@ -21,7 +25,8 @@ public class UDPServer {
             System.exit(1);
         }
 
-
+        BufferedWriter bw = null;
+        FileWriter fw = null;
         try {
             //1) Creamos el socket Servidor de Datagramas (UDP)
             DatagramSocket serverSocket = new DatagramSocket(puertoServidor);
@@ -31,36 +36,83 @@ public class UDPServer {
             byte[] receiveData = new byte[1024];
             byte[] sendData = new byte[1024];
 
+            File file = new File("log.txt");
+            // Si el archivo no existe, se crea!
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
             //3) Servidor siempre esperando
             while (true) {
+                fw = new FileWriter(file.getAbsoluteFile(), true);
+                bw = new BufferedWriter(fw);
+                try {
+                    receiveData = new byte[1024];
+                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    System.out.println("Esperando a algun cliente... ");
 
-                receiveData = new byte[1024];
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                System.out.println("Esperando a algun cliente... ");
+                    // 4) Receive LLAMADA BLOQUEANTE
+                    serverSocket.receive(receivePacket);
+                    System.out.println("________________________________________________");
+                    System.out.println("Aceptamos un paquete");
 
-                // 4) Receive LLAMADA BLOQUEANTE
-                serverSocket.receive(receivePacket);
-                System.out.println("________________________________________________");
-                System.out.println("Aceptamos un paquete");
-
-                // Datos recibidos e Identificamos quien nos envio
-                String datoRecibido = new String(receivePacket.getData());
-                datoRecibido = datoRecibido.trim();
-                System.out.println("DatoRecibido: " + datoRecibido);
-
-
-                Operacion recibidoCliente = new Operacion(datoRecibido);
-                Operacion enviarCliente = procesarOperacion(recibidoCliente);
+                    // Datos recibidos e Identificamos quien nos envio
+                    String datoRecibido = new String(receivePacket.getData());
+                    datoRecibido = datoRecibido.trim();
+                    System.out.println("DatoRecibido: " + datoRecibido);
 
 
-                sendData = enviarCliente.toJSON().getBytes();
+                    Operacion recibidoCliente = new Operacion(datoRecibido);
+                    Operacion enviarCliente = procesarOperacion(recibidoCliente);
 
-                // Enviando response
-                InetAddress IPAddress = receivePacket.getAddress();
-                int port = receivePacket.getPort();
-                System.out.println("IP Origen: "+  IPAddress + ":"+ puertoServidor + " IP Destino: " + IPAddress + ":"+ port );
-                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-                serverSocket.send(sendPacket);
+
+                    sendData = enviarCliente.toJSON().getBytes();
+
+
+                    // Enviando response
+                    InetAddress IPAddress = receivePacket.getAddress();
+                    int port = receivePacket.getPort();
+
+                    //registrando datos para files > fecha-hora/tipo operacion
+                    DateTimeFormatter fechaHora = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+
+                    int tipoOperacion = enviarCliente.tipo_operacion;
+
+                    String nombreOperacion = "";
+                    switch (tipoOperacion) {
+                        case 1:
+                            nombreOperacion = "registrar_consumo";
+                        case 2:
+                            nombreOperacion = "conexion_suministro";
+                        case 3:
+                            nombreOperacion = "desconexion_suministro";
+                        case 4:
+                            nombreOperacion = "lista_activos";
+                        case 5:
+                            nombreOperacion = " lista_inactivos";
+                    }
+
+
+                    System.out.println("IP Origen: " + IPAddress + ":" + puertoServidor + " IP Destino: " + IPAddress + ":" + port);
+                    String datosLog = "" + fechaHora.format(LocalDateTime.now()) + " IP Origen: " + IPAddress + ":" + puertoServidor + " IP Destino: " + IPAddress + ":" + port + "Tipo Operacion " + nombreOperacion + "\n";
+
+
+                    bw.write(datosLog);
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+                    serverSocket.send(sendPacket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        //Cierra instancias de FileWriter y BufferedWriter
+                        if (bw != null)
+                            bw.close();
+                        if (fw != null)
+                            fw.close();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
