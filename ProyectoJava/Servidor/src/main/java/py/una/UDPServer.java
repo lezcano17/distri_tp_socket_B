@@ -82,12 +82,16 @@ public class UDPServer {
                     switch (tipoOperacion) {
                         case 1:
                             nombreOperacion = "registrar_consumo";
+                            break;
                         case 2:
                             nombreOperacion = "conexion_suministro";
+                            break;
                         case 3:
                             nombreOperacion = "desconexion_suministro";
+                            break;
                         case 4:
                             nombreOperacion = "lista_activos";
+                            break;
                         case 5:
                             nombreOperacion = " lista_inactivos";
                     }
@@ -95,9 +99,7 @@ public class UDPServer {
 
                     System.out.println("IP Origen: " + IPAddress + ":" + puertoServidor + " IP Destino: " + IPAddress + ":" + port);
                     String datosLog = "" + fechaHora.format(LocalDateTime.now()) + " IP Origen: " + IPAddress + ":" + puertoServidor + " IP Destino: " + IPAddress + ":" + port + "Tipo Operacion " + nombreOperacion + "\n";
-
-
-                    bw.write(datosLog);
+                    bw.append(datosLog);
                     DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
                     serverSocket.send(sendPacket);
                 } catch (IOException e) {
